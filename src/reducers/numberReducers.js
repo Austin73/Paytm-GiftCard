@@ -1,4 +1,4 @@
-export function numberReducers(state=1,action)
+export function numberReducers(state="",action)
 {
    switch(action.type){
            

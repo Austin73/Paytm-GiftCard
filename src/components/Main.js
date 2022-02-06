@@ -1,11 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from '@mui/material'
-import { TextField } from '@mui/material'
-import { Dispatch } from 'react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
-import { add_number, change_isDigit10, change_number, change_thankyou } from '../actions'
+import { change_isDigit10, change_number, change_thankyou } from '../actions'
 const styles = {
     mainContainer: {
         width: '80%',
@@ -21,13 +19,26 @@ const styles = {
     }
 }
 
+// to get all stored number in local storage
+const getLocalStorageNumber=()=>{
+    let allNumber= localStorage.getItem('number');
+    if(allNumber)
+    {
+    
+      return JSON.parse(localStorage.getItem('number'));
+    }
+    else
+    {
+        return [];
+    }
+}
 
 const digitCount2 = num => String(Math.floor(Math.abs(num))).length;
 function Main() {
     const number = useSelector(state => state.number)
     const isdigit = useSelector(state => state.isdigit)
     const thankyou = useSelector(state => state.thankyou)
-    const addnumber = useSelector(state => state.addnumber)
+    const [storage,setStorage]= useState(getLocalStorageNumber)
     const dispatch = useDispatch()
     console.log(number)
     console.log(isdigit)
@@ -41,21 +52,10 @@ function Main() {
     }
 
     useEffect(() => {
-        console.log("sfsf")
-        const arr = localStorage.getItem('number')
-        console.log(arr)
-        if (arr!==null&&arr.includes(number)) {
-
-            dispatch(change_thankyou(false))
-        }
-        else {
-            localStorage.setItem('number', addnumber)
-
-        }
-
-
-    }, [addnumber])
-   
+            localStorage.setItem('number', JSON.stringify(storage))
+        
+    }, [storage])
+    
 
     return (
         <div style={styles.mainContainer}>
@@ -81,6 +81,8 @@ function Main() {
             } placeholder='Enter Mobile Number'
 
                 onChange={(e) => {
+
+                 
                     dispatch(change_number(e.target.value))
                     dispatch(change_thankyou(false))
 
@@ -98,16 +100,37 @@ function Main() {
                     fontWeight: 'bold'
                 }}
                     onClick={() => {
-                        isdigit && dispatch(change_thankyou(true))
+                        // check if number is already used
+                        if(storage.indexOf(number)===-1)
+                        {
+                            setStorage([...storage,number])
+                            isdigit && dispatch(change_thankyou(1))
+                        }
+                        else {
+                            isdigit && dispatch(change_thankyou(2))
+                        }
+
+                        
                     }}>Wow! Get my Paytm Gift Card &nbsp;<b>&gt;</b></Button>
 
             </div>
 
+{/* // if this number is used show used message */}
+            {
+               thankyou===2 && <div
+               style={{
+                   textAlign: 'center',
+                   marginTop: '15px',
+                   color: 'red',
+                   fontSize: '20px',
+                   marginBottom: '15px',
+                   fontWeight: 'bold'
+               }}
+           > This number has already been used  </div>
+            }
 
-
-
-
-            {thankyou && <div
+{/* // if this number is not used */}
+            {thankyou===1 && <div
                 style={{
                     textAlign: 'center',
                     marginTop: '15px',

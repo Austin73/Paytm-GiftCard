@@ -10,8 +10,6 @@ import { Provider } from 'react-redux';
 const store=createStore(allReducers)
 function App() {
   const isTabletOrMobile = useMediaQuery({ query: '(min-width: 300px)' })
-
-  
   return (
     <Provider store={store}>
     <div className="App">

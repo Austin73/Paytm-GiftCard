@@ -1,4 +1,4 @@
-export function thankyoureducer(state=false,action)
+export function thankyoureducer(state=0,action)
 {
    switch(action.type){
            
